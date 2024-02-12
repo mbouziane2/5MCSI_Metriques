@@ -1,52 +1,70 @@
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <title>Metrique</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load("current", {packages:["corechart"]});
-      google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Dinosaur', 'Length'],
-          ['Acrocanthosaurus (top-spined lizard)', 12.2],
-          ['Albertosaurus (Alberta lizard)', 9.1],
-          ['Allosaurus (other lizard)', 12.2],
-          ['Apatosaurus (deceptive lizard)', 22.9],
-          ['Archaeopteryx (ancient wing)', 0.9],
-          ['Argentinosaurus (Argentina lizard)', 36.6],
-          ['Baryonyx (heavy claws)', 9.1],
-          ['Brachiosaurus (arm lizard)', 30.5],
-          ['Ceratosaurus (horned lizard)', 6.1],
-          ['Coelophysis (hollow form)', 2.7],
-          ['Compsognathus (elegant jaw)', 0.9],
-          ['Deinonychus (terrible claw)', 2.7],
-          ['Diplodocus (double beam)', 27.1],
-          ['Dromicelomimus (emu mimic)', 3.4],
-          ['Gallimimus (fowl mimic)', 5.5],
-          ['Mamenchisaurus (Mamenchi lizard)', 21.0],
-          ['Megalosaurus (big lizard)', 7.9],
-          ['Microvenator (small hunter)', 1.2],
-          ['Ornithomimus (bird mimic)', 4.6],
-          ['Oviraptor (egg robber)', 1.5],
-          ['Plateosaurus (flat lizard)', 7.9],
-          ['Sauronithoides (narrow-clawed lizard)', 2.0],
-          ['Seismosaurus (tremor lizard)', 45.7],
-          ['Spinosaurus (spiny lizard)', 12.2],
-          ['Supersaurus (super lizard)', 30.5],
-          ['Tyrannosaurus (tyrant lizard)', 15.2],
-          ['Ultrasaurus (ultra lizard)', 30.5],
-          ['Velociraptor (swift robber)', 1.8]]);
-
-        var options = {
-          title: 'Lengths of dinosaurs, in meters',
-          legend: { position: 'none' },
-        };
-
-        var chart = new google.visualization.Histogram(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
-    </script>
   </head>
+
+  
   <body>
-    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+    <div id="chart_div"></div>
+<script>
+  google.charts.load('current', {packages: ['corechart']});
+  google.charts.setOnLoadCallback(drawBackgroundColor);
+
+  function drawBackgroundColor() {
+    fetch('/paris/')
+      .then(response => response.json())
+      .then(data => {
+        drawChart(data);
+      });
+  }
+
+  function drawChart(data) {
+    // Ajout d'une colonne supplémentaire pour les annotations
+    var dataArray = [['Date', 'Température', {role: 'style'}, {role: 'annotation'}]];
+    
+    data.results.forEach(entry => {
+      var date = new Date(entry.Jour * 1000);
+      var color = 'color: ' + getColorForTemperature(entry.temp);
+      var annotation = date.toLocaleDateString(); // Utiliser la date comme annotation
+      dataArray.push([date.toLocaleDateString(), entry.temp, color, annotation]);
+    });
+
+    var dataTable = google.visualization.arrayToDataTable(dataArray);
+
+    var options = {
+      title: 'Évolution des températures de Paris pour les 16 prochains jours',
+      legend: {position: 'none'},
+      hAxis: {title: 'Date'},
+      vAxis: {title: 'Température'},
+      annotations: {
+        alwaysOutside: true, // Assure que les annotations sont toujours affichées à l'extérieur des barres
+        textStyle: {
+          fontSize: 12, // Vous pouvez ajuster la taille de police ici
+          color: '#000', // Et la couleur du texte des annotations
+          auraColor: 'none' // Désactive l'arrière-plan des annotations
+        }
+      }
+    };
+
+    var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+    chart.draw(dataTable, options);
+  }
+
+  // Exemple de fonction pour déterminer la couleur en fonction de la température
+  function getColorForTemperature(temp) {
+    if(temp < 0) {
+      return '#1E90FF'; // Bleu pour les températures froides
+    } else if(temp >= 0 && temp < 20) {
+      return '#FFD700'; // Jaune pour les températures modérées
+    } else {
+      return '#FF4500'; // Rouge pour les températures chaudes
+    }
+  }
+</script>
+
+
+
   </body>
 </html>
