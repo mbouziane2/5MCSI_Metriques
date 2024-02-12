@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commits Graph</title>
+</head>
+<body>
+    <h1>Commits per Minute</h1>
+    <div id="chart"></div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var commit_minutes = {{ commit_minutes | tojson }};
+        
+        var data = [{
+            x: commit_minutes,
+            type: 'histogram',
+        }];
+
+        var layout = {
+            title: 'Commits per Minute',
+            xaxis: {
+                title: 'Minutes',
+            },
+            yaxis: {
+                title: 'Number of Commits',
+            },
+        };
+
+        Plotly.newPlot('chart', data, layout);
+    </script>
+</body>
+</html>
