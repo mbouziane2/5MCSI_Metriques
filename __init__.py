@@ -37,8 +37,15 @@ def mongraphique2():
 
 @app.route('/extract-minutes/<date_string>')
 def extract_minutes(date_string):
-        date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-        minutes = date_object.minute
+        response = urlopen('https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits')
+        raw_content = response.read()
+        json_content = json.loads(raw_content.decode('utf-8'))
+        results = []
+        date_value = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+        minutes = date_value.minute
+        for list_element in json_content.get('list', []):
+            date_value = list_element.get('date')
+            results.append({'Commits': date_value})
         return jsonify({'minutes': minutes})
   
 if __name__ == "__main__":
