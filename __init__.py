@@ -35,7 +35,7 @@ def mongraphique():
 def mongraphique2():
     return render_template("histogramme.html")
 
-repo_url = "https://api.github.com/repos/mbouziane2/VotreProjet/commits"
+repo_url = "https://api.github.com/repos/mbouziane2/5MCSI_Metriques/commits"
 
 @app.route('/commits/')
 def commits():
