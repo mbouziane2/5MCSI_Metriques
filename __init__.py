@@ -34,6 +34,34 @@ def mongraphique():
 @app.route("/histogramme/")
 def mongraphique2():
     return render_template("histogramme.html")
+
+@app.route('/commits/')
+def commits():
+    url = "https://api.github.com/repos/Posayidon/5MCSI_Metriques/commits"
+    r = requests.get(url)
+    commits_data = r.json()
+    
+    # Extraction des minutes de chaque commit
+    commit_minutes = {}
+    for commit in commits_data:
+        commit_date = commit['commit']['author']['date']
+        minute = datetime.strptime(commit_date, '%Y-%m-%dT%H:%M:%SZ').minute
+        commit_minutes[minute] = commit_minutes.get(minute, 0) + 1
+
+    # Création du graphique
+    plt.figure(figsize=(10, 6))
+    plt.bar(commit_minutes.keys(), commit_minutes.values(), color='blue')
+    plt.xlabel('Minutes')
+    plt.ylabel('Nombre de commits')
+    plt.title('Commits par minute')
+
+    # Sauvegarde du graphique en format base64 pour affichage dans HTML
+    img = BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    plot_url = base64.b64encode(img.getvalue()).decode()
+
+    return '<img src="data:image/png;base64,{}">'.format(plot_url)
   
 if __name__ == "__main__":
   app.run(debug=True)
