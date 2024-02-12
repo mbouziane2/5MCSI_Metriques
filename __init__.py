@@ -4,8 +4,7 @@ from flask import json
 from datetime import datetime
 from urllib.request import urlopen
 import sqlite3
-import requests
-                                                                                                                                       
+                                                                                                                   
 app = Flask(__name__)                                                                                                                  
                                                                                                                                        
 @app.route('/')
@@ -36,7 +35,6 @@ def mongraphique():
 def mongraphique2():
     return render_template("histogramme.html")
 
-repo_url = "https://api.github.com/repos/mbouziane2/5MCSI_Metriques/commits"
 
 @app.route("/commits/")
 def moncommits():
