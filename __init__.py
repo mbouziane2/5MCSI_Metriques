@@ -37,7 +37,7 @@ def mongraphique2():
 
 @app.route('/commits/')
 def commits():
-    url = "https://api.github.com/repos/Posayidon/5MCSI_Metriques/commits"
+    url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
     r = requests.get(url)
     commits_data = r.json()
     
